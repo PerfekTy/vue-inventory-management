@@ -16,7 +16,8 @@
     "radix-vue": "^1.5.1",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
-    "vue": "^3.4.19"
+    "vue": "^3.4.19",
+    "vue-router": "^4.3.0"
   },
   "devDependencies": {
     "@iconify-json/radix-icons": "^1.1.14",
@@ -27,6 +28,7 @@
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.2.2",
+    "unplugin-vue-router": "^0.8.4",
     "vite": "^5.1.4",
     "vue-tsc": "^1.8.27"
   }

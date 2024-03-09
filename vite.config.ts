@@ -1,5 +1,6 @@
 import path from "path";
 import vue from "@vitejs/plugin-vue";
+import VueRouter from "unplugin-vue-router/vite";
 import { defineConfig } from "vite";
 
 import tailwind from "tailwindcss";
@@ -11,7 +12,7 @@ export default defineConfig({
       plugins: [tailwind(), autoprefixer()],
     },
   },
-  plugins: [vue()],
+  plugins: [VueRouter(), vue()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

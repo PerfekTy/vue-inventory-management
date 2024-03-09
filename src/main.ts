@@ -1,5 +1,10 @@
+import { createRouter, createWebHistory } from "vue-router/auto";
 import { createApp } from "vue";
-import "./index.css";
 import App from "./App.vue";
+import "./index.css";
 
-createApp(App).mount("#app");
+export const router = createRouter({
+  history: createWebHistory(),
+});
+
+createApp(App).use(router).mount("#app");
