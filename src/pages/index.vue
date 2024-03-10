@@ -2,4 +2,6 @@
 import ModeToggle from "@/components/ui/mode-toggle/ModeToggle.vue";
 </script>
 
-<template><ModeToggle /></template>
+<template>
+  <ModeToggle />
+</template>
