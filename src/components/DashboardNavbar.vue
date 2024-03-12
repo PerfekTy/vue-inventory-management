@@ -1,66 +1,52 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import DashboardNavbarCategorySelector from "./DashboardNavbarCategorySelector.vue";
-import HamburgerMenu from "./HamburgerMenu.vue";
-import { X } from "lucide-vue-next";
+import { FolderKanban, Search, Settings, Target } from "lucide-vue-next";
+import DashboardNavbarMobile from "./DashboardNavbarMobile.vue";
+import Input from "./ui/input/Input.vue";
 
 const routes = [
   {
     name: "Overview",
-    path: "/overview",
+    path: "/",
+    icon: Target,
     protected: false,
   },
   {
     name: "Products",
     path: "/products",
+    icon: FolderKanban,
     protected: true,
   },
   {
     name: "Settings",
     path: "/settings",
+    icon: Settings,
     protected: true,
   },
 ];
-
-const isOpen = ref(false);
-const toggleMenu = () => {
-  isOpen.value = !isOpen.value;
-};
 </script>
 
 <template>
-  <nav class="md:flex p-5 items-center gap-6 relative">
-    <div class="flex items-center justify-between">
-      <HamburgerMenu :toggleMenu="toggleMenu" />
-      <DashboardNavbarCategorySelector />
-    </div>
-    <div class="md:flex items-center gap-6 hidden">
+  <nav class="lg:flex items-center gap-6 relative p-3 lg:py-3 lg:px-0 lg:pr-3">
+    <DashboardNavbarMobile :routes="routes" />
+    <div class="lg:flex items-center gap-6 hidden">
       <ul v-for="route in routes">
         <router-link
           :to="route.path"
-          class="text-sm text-muted-foreground hover:text-white cursor-pointer"
+          class="p-5 flex text-sm items-center gap-3 text-muted-foreground hover:dark:text-white hover:text-blue transition-all hover:scale-105"
         >
+          <component :is="route.icon" class="w-5 aspect-square" />
           {{ route.name }}
         </router-link>
       </ul>
     </div>
 
-    <div
-      class="flex flex-col gap-6 dark:bg-slate-800 bg-slate-100 p-5 h-screen w-1/2 top-0 left-0 z-50"
-      :class="isOpen ? 'fixed' : 'hidden'"
-    >
-      <div class="pt-20 flex flex-col gap-6 text-left relative">
-        <router-link
-          v-for="route in routes"
-          :to="route.path"
-          class="text-sm text-muted-foreground hover:text-white cursor-pointer"
-        >
-          {{ route.name }}
-        </router-link>
-        <X class="absolute top-0 right-0 cursor-pointer" @click="toggleMenu" />
-      </div>
+    <div class="xl:block hidden w-full"></div>
+
+    <div class="relative ml-auto w-full">
+      <Search class="absolute left-2.5 top-2.5" :size="20" />
+      <Input class="pl-10 xl:max-w-[700px]" placeholder="Search..." />
     </div>
 
-    <div></div>
+    <!-- Profile avatar dropdown with some options -->
   </nav>
 </template>

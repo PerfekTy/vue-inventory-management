@@ -10,6 +10,7 @@ import {
 import { ChevronsUpDown } from "lucide-vue-next";
 import Command from "./ui/command/Command.vue";
 import CommandInput from "./ui/command/CommandInput.vue";
+import CreateCategoryModal from "./CreateCategoryModal.vue";
 </script>
 
 <template>
@@ -48,6 +49,11 @@ import CommandInput from "./ui/command/CommandInput.vue";
         ><img src="../assets/category-placeholder.png" width="30" />
         <p>Vegetables</p></DropdownMenuItem
       >
+      <DropdownMenuSeparator />
+      <!-- Work around with modal in dropdowns -->
+      <DropdownMenuItem class="px-2">
+        <CreateCategoryModal />
+      </DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
 </template>
