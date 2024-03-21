@@ -1,47 +1,76 @@
 <script setup>
+import * as z from "zod";
+import { useForm } from "vee-validate";
+import { toTypedSchema } from "@vee-validate/zod";
+
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
 import Label from "@/components/ui/label/Label.vue";
 import Separator from "@/components/ui/separator/Separator.vue";
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import SignLogo from "@/components/SignLogo.vue";
+
+const formSchema = toTypedSchema(
+  z
+    .object({
+      email: z.string().email(),
+      password: z.string().min(3).max(10),
+    })
+    .refine((data) => data.password === data.password_confirmation, {
+      message: "Passwords don't match",
+      path: ["confirm"],
+    })
+);
+
+const form = useForm({
+  validationSchema: formSchema,
+});
+
+const onSubmit = form.handleSubmit((values) => {
+  console.log("Form submitted!", values);
+});
 </script>
 
 <template>
-  <div class="flex justify-center items-center h-screen">
-    <div class="mx-auto max-w-[350px] space-y-6">
-      <div class="text-center flex flex-col items-center gap-2">
-        <img
-          src="../assets/logo.png"
-          alt="Inventory Managment System logo"
-          width="200"
-        />
-        <h1 class="text-3xl font-bold">Inventory Managment System</h1>
-        <p class="text-gray-500 dark:text-gray-400">
-          Join our inventory management service and enjoy the best efficiency,
-          and accuracy.
-        </p>
-      </div>
-      <div>
-        <div class="space-y-4">
-          <div class="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              placeholder="m@example.com"
-              required
-              type="email"
-            />
-          </div>
-          <div class="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input id="password" required type="password" />
-          </div>
-          <Button class="w-full" type="submit">Sign In</Button>
-        </div>
-        <div class="mt-4 text-center text-sm flex gap-1 justify-center">
-          Don't have an account yet?
-          <router-link to="/sign-up" class="underline"> Register </router-link>
-        </div>
-      </div>
-    </div>
-  </div>
+  <form
+    @submit="onSubmit"
+    class="flex flex-col justify-center max-w-[500px] h-screen container gap-5"
+  >
+    <SignLogo />
+
+    <FormField v-slot="{ componentField }" name="email">
+      <FormItem>
+        <FormLabel>Email</FormLabel>
+        <FormControl>
+          <Input
+            type="email"
+            placeholder="m@example.com"
+            v-bind="componentField"
+          />
+        </FormControl>
+        <FormMessage />
+      </FormItem>
+    </FormField>
+    <FormField v-slot="{ componentField }" name="password">
+      <FormItem>
+        <FormLabel>Password</FormLabel>
+        <FormControl>
+          <Input type="password" v-bind="componentField" />
+        </FormControl>
+        <FormMessage />
+      </FormItem>
+    </FormField>
+    <Button type="submit"> Sign In </Button>
+    <p class="text-sm text-muted-foreground'">
+      Doesn't have an account?
+      <router-link class="underline" to="/sign-up">Register</router-link>
+    </p>
+  </form>
 </template>
