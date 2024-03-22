@@ -3,8 +3,8 @@ const jwt = require("jsonwebtoken");
 
 const expiresIn = 15 * 60;
 
-const createToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn });
+const createToken = (user) => {
+  return jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn });
 };
 
 const validateToken = (req, res, next) => {
