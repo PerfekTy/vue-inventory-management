@@ -1,6 +1,5 @@
-<script setup>
+<script setup lang="ts">
 import * as z from "zod";
-import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 
 import Button from "@/components/ui/button/Button.vue";
@@ -8,6 +7,7 @@ import Input from "@/components/ui/input/Input.vue";
 import Label from "@/components/ui/label/Label.vue";
 import Separator from "@/components/ui/separator/Separator.vue";
 import {
+  Form,
   FormControl,
   FormDescription,
   FormField,
@@ -16,6 +16,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import SignLogo from "@/components/SignLogo.vue";
+import ModeToggle from "@/components/ui/mode-toggle/ModeToggle.vue";
+import axios from "axios";
+import { serverString } from "../lib/utils.ts";
+import cookies from "vue-cookies";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const formSchema = toTypedSchema(
   z
@@ -31,17 +38,27 @@ const formSchema = toTypedSchema(
     })
 );
 
-const form = useForm({
-  validationSchema: formSchema,
-});
+async function onSubmit(values) {
+  try {
+    const { data } = await axios.post(`${serverString}/api/sign-up`, {
+      name: values.name,
+      email: values.email,
+      password: values.password,
+    });
 
-const onSubmit = form.handleSubmit((values) => {
-  console.log("Form submitted!", values);
-});
+    if (data.token) {
+      cookies.set("token", data.token);
+      router.push("/");
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
 </script>
 
 <template>
-  <form
+  <Form
+    :validation-schema="formSchema"
     @submit="onSubmit"
     class="flex flex-col justify-center max-w-[500px] h-screen container gap-5"
   >
@@ -50,7 +67,7 @@ const onSubmit = form.handleSubmit((values) => {
       <FormItem>
         <FormLabel>Name</FormLabel>
         <FormControl>
-          <Input type="text" placeholder="shadcn" v-bind="componentField" />
+          <Input type="text" placeholder="Jane Doe" v-bind="componentField" />
         </FormControl>
         <FormDescription>This is your public display name.</FormDescription>
         <FormMessage />
@@ -91,10 +108,13 @@ const onSubmit = form.handleSubmit((values) => {
         <FormMessage />
       </FormItem>
     </FormField>
-    <Button type="submit"> Sign Up </Button>
+    <div class="flex justify-between gap-5">
+      <Button class="w-full" type="submit"> Sign Up </Button>
+      <ModeToggle />
+    </div>
     <p class="text-sm text-muted-foreground'">
       Already have an account?
       <router-link class="underline" to="/sign-in">Login</router-link>
     </p>
-  </form>
+  </Form>
 </template>

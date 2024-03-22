@@ -1,6 +1,5 @@
 <script setup>
 import * as z from "zod";
-import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 
 import Button from "@/components/ui/button/Button.vue";
@@ -8,6 +7,7 @@ import Input from "@/components/ui/input/Input.vue";
 import Label from "@/components/ui/label/Label.vue";
 import Separator from "@/components/ui/separator/Separator.vue";
 import {
+  Form,
   FormControl,
   FormDescription,
   FormField,
@@ -16,30 +16,42 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import SignLogo from "@/components/SignLogo.vue";
+import { serverString } from "../lib/utils";
+import { useRouter } from "vue-router";
+import axios from "axios";
+import cookies from "vue-cookies";
+import * as jwt from "jose";
+import ModeToggle from "@/components/ui/mode-toggle/ModeToggle.vue";
+
+const router = useRouter();
 
 const formSchema = toTypedSchema(
-  z
-    .object({
-      email: z.string().email(),
-      password: z.string().min(3).max(10),
-    })
-    .refine((data) => data.password === data.password_confirmation, {
-      message: "Passwords don't match",
-      path: ["confirm"],
-    })
+  z.object({
+    email: z.string().email(),
+    password: z.string().min(3).max(10),
+  })
 );
 
-const form = useForm({
-  validationSchema: formSchema,
-});
+async function onSubmit(values) {
+  try {
+    const { data } = await axios.post(`${serverString}/api/sign-in`, {
+      email: values.email,
+      password: values.password,
+    });
 
-const onSubmit = form.handleSubmit((values) => {
-  console.log("Form submitted!", values);
-});
+    if (data.token) {
+      cookies.set("token", data.token);
+      router.push("/");
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
 </script>
 
 <template>
-  <form
+  <Form
+    :validation-schema="formSchema"
     @submit="onSubmit"
     class="flex flex-col justify-center max-w-[500px] h-screen container gap-5"
   >
@@ -67,10 +79,14 @@ const onSubmit = form.handleSubmit((values) => {
         <FormMessage />
       </FormItem>
     </FormField>
-    <Button type="submit"> Sign In </Button>
+    <div class="flex justify-between gap-5">
+      <Button class="w-full" type="submit"> Sign In </Button>
+      <ModeToggle />
+    </div>
+
     <p class="text-sm text-muted-foreground'">
       Doesn't have an account?
       <router-link class="underline" to="/sign-up">Register</router-link>
     </p>
-  </form>
+  </Form>
 </template>
