@@ -11,12 +11,16 @@ import { ChevronsUpDown } from "lucide-vue-next";
 import Command from "./ui/command/Command.vue";
 import CommandInput from "./ui/command/CommandInput.vue";
 import CreateCategoryModal from "./CreateCategoryModal.vue";
+import { getToken } from "../lib/utils.ts";
+import placeholder from "../assets/user-placeholder.png";
+
+const token = getToken();
 </script>
 
 <template>
   <DropdownMenu>
     <DropdownMenuTrigger
-      class="flex items-center justify-between p-1.5 rounded-md border font-semibold text-sm w-72 md:w-52"
+      class="flex items-center justify-between p-1.5 lg:-ml-20 rounded-md border font-semibold text-sm w-52"
     >
       <div class="flex items-center gap-1">
         <img src="../assets/category-placeholder.png" width="30" />
@@ -37,8 +41,11 @@ import CreateCategoryModal from "./CreateCategoryModal.vue";
         Personal Account
       </DropdownMenuLabel>
       <DropdownMenuItem class="flex items-center gap-2 px-2">
-        <img src="../assets/user-placeholder.png" width="20" />
-        <p>Sebastian Feleńczak</p>
+        <img
+          :src="token.user.image ? token.user.image : placeholder"
+          width="20"
+        />
+        <p>{{ token.user.name }}</p>
       </DropdownMenuItem>
 
       <!-- Categories -->
@@ -51,7 +58,7 @@ import CreateCategoryModal from "./CreateCategoryModal.vue";
       >
       <DropdownMenuSeparator />
       <!-- Work around with modal in dropdowns -->
-      <DropdownMenuItem class="px-2">
+      <DropdownMenuItem class="px-2" as-child>
         <CreateCategoryModal />
       </DropdownMenuItem>
     </DropdownMenuContent>

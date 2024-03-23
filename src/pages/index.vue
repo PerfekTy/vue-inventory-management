@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import DashboardNavbar from "@/components/DashboardNavbar.vue";
-import ModeToggle from "@/components/ui/mode-toggle/ModeToggle.vue";
 import { getToken } from "@/lib/utils";
 import { onBeforeMount } from "vue";
 import { useRouter } from "vue-router";
@@ -16,8 +15,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <div>
+  <div class="lg:container">
     <DashboardNavbar />
   </div>
-  <ModeToggle />
 </template>

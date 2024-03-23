@@ -20,4 +20,8 @@ export function getToken() {
   return decodedToken;
 }
 
+export function deleteToken() {
+  return cookies.remove("token");
+}
+
 export const serverString = "http://localhost:8080";

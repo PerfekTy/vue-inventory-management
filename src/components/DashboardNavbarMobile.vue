@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Route, SquareChevronRight } from "lucide-vue-next";
 import DashboardNavbarCategorySelector from "./DashboardNavbarCategorySelector.vue";
+import DashboardNavbarUser from "./DashboardNavbarUser.vue";
 
 import {
   Sheet,
@@ -23,11 +24,14 @@ defineProps<{
 </script>
 
 <template>
-  <div class="flex items-center justify-between lg:gap-6 py-3">
+  <div class="flex items-center justify-between lg:gap-6 py-3 px-2">
     <Sheet>
-      <SheetTrigger>
-        <SquareChevronRight class="lg:hidden ml-1.5" />
-      </SheetTrigger>
+      <div class="flex items-center gap-5 lg:gap-16">
+        <SheetTrigger>
+          <SquareChevronRight class="ml-1.5 lg:hidden" />
+        </SheetTrigger>
+        <DashboardNavbarCategorySelector />
+      </div>
       <SheetContent side="left" class="w-[300px] p-0">
         <SheetHeader>
           <SheetTitle class="pt-10 text-center">Inventory Managment</SheetTitle>
@@ -44,6 +48,8 @@ defineProps<{
         </SheetHeader>
       </SheetContent>
     </Sheet>
-    <DashboardNavbarCategorySelector />
+    <div class="lg:hidden mr-2">
+      <DashboardNavbarUser />
+    </div>
   </div>
 </template>

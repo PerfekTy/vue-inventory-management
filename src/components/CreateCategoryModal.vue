@@ -15,7 +15,9 @@ import CategoryForm from "./CategoryForm.vue";
 
 <template>
   <Dialog>
-    <DialogTrigger class="flex items-center justify-center gap-2">
+    <DialogTrigger
+      class="flex items-center justify-start gap-2 hover:bg-[#f1f5f9] hover:dark:bg-[#1e293b] w-full p-1.5 rounded-lg text-sm"
+    >
       <PlusCircleIcon width="20" />
       <p>Create Category</p>
     </DialogTrigger>

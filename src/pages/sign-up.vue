@@ -108,7 +108,7 @@ async function onSubmit(values) {
         <FormMessage />
       </FormItem>
     </FormField>
-    <div class="flex justify-between gap-5">
+    <div class="flex justify-between items-center gap-5">
       <Button class="w-full" type="submit"> Sign Up </Button>
       <ModeToggle />
     </div>

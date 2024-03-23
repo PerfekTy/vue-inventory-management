@@ -1,20 +1,25 @@
-<script setup lang="ts">
+<script setup>
 import { FolderKanban, Search, Settings, Target } from "lucide-vue-next";
 import DashboardNavbarMobile from "./DashboardNavbarMobile.vue";
 import Input from "./ui/input/Input.vue";
+import { getToken } from "../lib/utils.ts";
+import DashboardNavbarUser from "./DashboardNavbarUser.vue";
+
+const token = getToken();
+const { user } = token;
 
 const routes = [
   {
     name: "Overview",
     path: "/",
     icon: Target,
-    protected: false,
+    protected: true,
   },
   {
     name: "Products",
     path: "/products",
     icon: FolderKanban,
-    protected: true,
+    protected: false,
   },
   {
     name: "Settings",
@@ -23,14 +28,19 @@ const routes = [
     protected: true,
   },
 ];
+
+const filteredRoutes = routes.filter(
+  (route) => !route.protected || (route.protected && user.role !== "user")
+);
 </script>
 
 <template>
-  <nav class="lg:flex items-center gap-6 relative p-3 lg:py-3 lg:px-0 lg:pr-3">
-    <DashboardNavbarMobile :routes="routes" />
+  <nav class="lg:flex items-center gap-6 relative">
+    <DashboardNavbarMobile :routes="filteredRoutes" />
     <div class="lg:flex items-center gap-6 hidden">
-      <ul v-for="route in routes">
+      <ul v-for="route in filteredRoutes" :key="route.name">
         <router-link
+          v-if="!route.protected || (route.protected && user.role !== 'user')"
           :to="route.path"
           class="p-5 flex text-sm items-center gap-3 text-muted-foreground hover:dark:text-white hover:text-blue transition-all hover:scale-105"
         >
@@ -40,13 +50,16 @@ const routes = [
       </ul>
     </div>
 
-    <div class="xl:block hidden w-full"></div>
-
-    <div class="relative ml-auto w-full">
-      <Search class="absolute left-2.5 top-2.5" :size="20" />
-      <Input class="pl-10 xl:max-w-[700px]" placeholder="Search..." />
+    <div class="relative ml-auto px-2">
+      <Search class="absolute top-2.5 left-5" :size="20" />
+      <Input
+        class="pl-10 lg:min-w-[200px] xl:max-w-[700px]"
+        placeholder="Search..."
+      />
     </div>
 
-    <!-- Profile avatar dropdown with some options -->
+    <div class="hidden lg:block">
+      <DashboardNavbarUser />
+    </div>
   </nav>
 </template>
