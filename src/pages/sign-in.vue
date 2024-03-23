@@ -1,6 +1,13 @@
-<script setup>
+<script setup lang="ts">
+import * as jwt from "jose";
 import * as z from "zod";
+import { serverString } from "../lib/utils";
+import { useRouter } from "vue-router";
 import { toTypedSchema } from "@vee-validate/zod";
+import cookies from "vue-cookies";
+import axios from "axios";
+import { getToken } from "@/lib/utils";
+import { onBeforeMount } from "vue";
 
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
@@ -16,14 +23,16 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import SignLogo from "@/components/SignLogo.vue";
-import { serverString } from "../lib/utils";
-import { useRouter } from "vue-router";
-import axios from "axios";
-import cookies from "vue-cookies";
-import * as jwt from "jose";
 import ModeToggle from "@/components/ui/mode-toggle/ModeToggle.vue";
 
 const router = useRouter();
+
+onBeforeMount(() => {
+  const token = getToken();
+  if (token) {
+    router.push("/");
+  }
+});
 
 const formSchema = toTypedSchema(
   z.object({
