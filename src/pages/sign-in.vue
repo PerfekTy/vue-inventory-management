@@ -1,5 +1,4 @@
-<script setup lang="ts">
-import * as jwt from "jose";
+<script setup>
 import * as z from "zod";
 import { serverString } from "../lib/utils";
 import { useRouter } from "vue-router";
@@ -7,16 +6,13 @@ import { toTypedSchema } from "@vee-validate/zod";
 import cookies from "vue-cookies";
 import axios from "axios";
 import { getToken } from "@/lib/utils";
-import { onBeforeMount } from "vue";
+import { onBeforeMount, ref } from "vue";
 
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
-import Label from "@/components/ui/label/Label.vue";
-import Separator from "@/components/ui/separator/Separator.vue";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -26,6 +22,7 @@ import SignLogo from "@/components/SignLogo.vue";
 import ModeToggle from "@/components/ui/mode-toggle/ModeToggle.vue";
 
 const router = useRouter();
+let error = ref(null);
 
 onBeforeMount(() => {
   const token = getToken();
@@ -52,8 +49,8 @@ async function onSubmit(values) {
       cookies.set("token", data.token);
       router.push("/");
     }
-  } catch (error) {
-    console.log(error);
+  } catch ({ response }) {
+    error.value = response.data.error;
   }
 }
 </script>
@@ -92,7 +89,7 @@ async function onSubmit(values) {
       <Button class="w-full" type="submit"> Sign In </Button>
       <ModeToggle />
     </div>
-
+    <p v-if="error" class="text-red-500">{{ error }}</p>
     <p class="text-sm text-muted-foreground'">
       Doesn't have an account?
       <router-link class="underline" to="/sign-up">Register</router-link>

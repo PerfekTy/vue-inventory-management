@@ -21,24 +21,25 @@ import axios from "axios";
 import { serverString } from "../lib/utils.ts";
 import cookies from "vue-cookies";
 import { useRouter } from "vue-router";
+import { ref } from "vue";
 
 const router = useRouter();
+let error = ref(null);
 
 const formSchema = toTypedSchema(
-  z
-    .object({
-      name: z.string().min(2).max(50),
-      email: z.string().email(),
-      password: z.string().min(3).max(10),
-      password_confirmation: z.string(3).max(10),
-    })
-    .refine((data) => data.password === data.password_confirmation, {
-      message: "Passwords don't match",
-      path: ["confirm"],
-    })
+  z.object({
+    name: z.string().min(2).max(50),
+    email: z.string().email(),
+    password: z.string().min(3).max(10),
+    password_confirmation: z.string(3).max(10),
+  })
 );
 
 async function onSubmit(values) {
+  if (values.password !== values.password_confirmation) {
+    error.value = "Passwords must match";
+    return;
+  }
   try {
     const { data } = await axios.post(`${serverString}/api/sign-up`, {
       name: values.name,
@@ -50,8 +51,8 @@ async function onSubmit(values) {
       cookies.set("token", data.token);
       router.push("/");
     }
-  } catch (error) {
-    console.log(error);
+  } catch ({ response }) {
+    error.value = response.data.error;
   }
 }
 </script>
@@ -112,6 +113,7 @@ async function onSubmit(values) {
       <Button class="w-full" type="submit"> Sign Up </Button>
       <ModeToggle />
     </div>
+    <p v-if="error" class="text-red-500">{{ error }}</p>
     <p class="text-sm text-muted-foreground'">
       Already have an account?
       <router-link class="underline" to="/sign-in">Login</router-link>
