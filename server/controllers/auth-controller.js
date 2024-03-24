@@ -10,15 +10,21 @@ async function signUp(req, res) {
   }
 
   try {
+    const query = await db.query(`SELECT * FROM users WHERE email = $1`, [
+      email,
+    ]);
+
+    if (query.rows[0].email === email) {
+      return res
+        .status(422)
+        .json({ error: "User with that email already exists." });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     await db.query(
       "INSERT INTO users(name, email, password) VALUES($1, $2, $3)",
       [name, email, hashedPassword]
     );
-
-    const query = await db.query(`SELECT * FROM users WHERE email = $1`, [
-      email,
-    ]);
 
     const user = query.rows[0];
 

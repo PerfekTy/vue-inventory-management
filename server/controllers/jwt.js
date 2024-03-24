@@ -8,17 +8,18 @@ const createToken = (user) => {
 };
 
 const validateToken = (req, res, next) => {
-  const token = req.cookies.token;
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
 
   if (!token) {
     res.status(404).json({ error: "Session not found." });
   }
 
-  jwt.verify(token, process.env.JWT_SECRET, (error, decodedToken) => {
+  jwt.verify(token, process.env.JWT_SECRET, (error, user) => {
     if (error) {
       res.status(500).json({ error: "Token is not valid." });
     }
-    console.log(decodedToken);
+    req.user = user;
     next();
   });
 };

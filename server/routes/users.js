@@ -1,11 +1,9 @@
 const { Router } = require("express");
+const { validateToken } = require("../controllers/jwt");
+const { getCurrentUser } = require("../controllers/user");
 const router = Router();
 
-router.get("/user", async (req, res) => {
-  const query = await db.query(`SELECT * FROM users WHERE email = $1`, [email]);
-
-  return query.rows[0];
-});
+router.get("/current-user", validateToken, getCurrentUser);
 
 module.exports = {
   users: router,
