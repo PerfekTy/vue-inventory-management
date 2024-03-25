@@ -22,10 +22,7 @@ const router = createRouter({
     {
       path: '/sign-in',
       name: 'signIn',
-      component: SignInView,
-      meta: {
-        auth: false
-      }
+      component: SignInView
     },
     {
       path: '/sign-up',
@@ -34,7 +31,7 @@ const router = createRouter({
     },
     {
       path: '/:catchAll(.*)',
-      name: 'nof-found',
+      name: 'not-found',
       component: NotFoundView
     }
   ]

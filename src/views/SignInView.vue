@@ -17,10 +17,8 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import SignLogo from '@/components/SignLogo.vue'
-import { useRouter } from 'vue-router'
 
-const router = useRouter()
-let error = ref(null)
+const error = ref(null)
 
 const formSchema = toTypedSchema(
   z.object({
@@ -38,7 +36,7 @@ const onSubmit = async (values) => {
 
     if (data.token) {
       cookies.set('token', data.token)
-      router.push('/products')
+      window.location.reload()
     }
   } catch ({ response }) {
     error.value = response.data.error

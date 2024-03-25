@@ -2,7 +2,6 @@
 import { ref } from 'vue'
 import * as z from 'zod'
 import cookies from 'vue-cookies'
-import { useRouter } from 'vue-router'
 import { toTypedSchema } from '@vee-validate/zod'
 import axios from 'axios'
 import { serverString } from '../lib/utils'
@@ -20,7 +19,6 @@ import {
 } from '../components/ui/form'
 import SignLogo from '../components/SignLogo.vue'
 
-const router = useRouter()
 const error = ref(null)
 
 const formSchema = toTypedSchema(
@@ -47,7 +45,7 @@ const onSubmit = async (values) => {
 
     if (data.token) {
       cookies.set('token', data.token)
-      router.push('/products')
+      window.location.reload()
     }
   } catch ({ response }) {
     error.value = response.data.error
