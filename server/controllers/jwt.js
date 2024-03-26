@@ -1,23 +1,54 @@
 require('dotenv').config()
 const jwt = require('jsonwebtoken')
 
-const expiresIn = 15 * 60 * 1000
+const expiresIn = 5
+const expiresInRefresh = 60 * 10
 
 const createToken = (user) => {
-  return jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn })
+  return jwt.sign({ user }, process.env.JWT_CREATE_SECRET, { expiresIn })
 }
 
-const validateToken = (req, res, next) => {
+const createRefreshToken = (user) => {
+  return jwt.sign({ user }, process.env.JWT_REFRESH_SECRET, { expiresIn: expiresInRefresh })
+}
+
+const refreshToken = (req, res) => {
+  const authHeader = req.headers['authorization']
+  const refreshToken = authHeader && authHeader.split(' ')[1]
+
+  if (!refreshToken) {
+    return res.status(401).json({ error: 'Refresh token not provided.' })
+  }
+
+  try {
+    const decodedRefreshToken = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET)
+    const user = decodedRefreshToken.user
+
+    const token = createToken(user)
+
+    if (!token) {
+      return res.status(500).json({ error: 'Error while refreshing access token.' })
+    }
+
+    return res.status(200).json({ token })
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ error: 'Error while decoding refresh token or generating new access token.' })
+  }
+}
+
+const validateToken = (secret) => (req, res, next) => {
   const authHeader = req.headers['authorization']
   const token = authHeader && authHeader.split(' ')[1]
 
   if (!token) {
-    res.status(404).json({ error: 'Session not found.' })
+    return res.status(404).json({ error: 'Session not found.' })
   }
 
-  jwt.verify(token, process.env.JWT_SECRET, (error, user) => {
+  jwt.verify(token, secret, (error, user) => {
     if (error) {
-      res.status(500).json({ error: 'Token is not valid.' })
+      return res.status(500).json({ error: 'Token is not valid.' })
     }
     req.user = user
     next()
@@ -26,6 +57,8 @@ const validateToken = (req, res, next) => {
 
 module.exports = {
   createToken,
+  createRefreshToken,
+  refreshToken,
   validateToken,
   expiresIn
 }

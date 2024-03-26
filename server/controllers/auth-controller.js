@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt')
 const { db } = require('../db-connection')
-const { createToken } = require('./jwt')
+const { createToken, createRefreshToken } = require('./jwt')
 
 async function signUp(req, res) {
   const { name, email, password } = await req.body
@@ -66,10 +66,11 @@ async function signIn(req, res) {
     delete userWithoutPassword.password
 
     const token = createToken(userWithoutPassword)
+    const refreshToken = createRefreshToken(userWithoutPassword)
 
     return res.status(200).json({
-      message: 'User succesfully authenticated.',
-      token
+      token,
+      refreshToken
     })
   } catch (error) {
     return res.status(500).json({ error: `Error while logging in user to the service. ${error}` })
