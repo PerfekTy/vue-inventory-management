@@ -12,7 +12,7 @@ async function signUp(req, res) {
   try {
     const query = await db.query(`SELECT * FROM users WHERE email = $1`, [email])
 
-    if (query.rows[0].email === email) {
+    if (query.rows[0]?.email === email) {
       return res.status(422).json({ error: 'User with that email already exists.' })
     }
 
@@ -23,7 +23,8 @@ async function signUp(req, res) {
       hashedPassword
     ])
 
-    const user = query.rows[0]
+    const existingUser = await db.query(`SELECT * FROM users WHERE email = $1`, [email])
+    const user = existingUser.rows[0]
 
     const userWithoutPassword = { ...user }
     delete userWithoutPassword.password

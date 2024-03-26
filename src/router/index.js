@@ -5,6 +5,7 @@ import ProductsView from '../views/ProductsView.vue'
 import SignInView from '../views/SignInView.vue'
 import SignUpView from '../views/SignUpView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
+import SettingsView from '@/views/SettingsView.vue'
 
 const token = getToken()
 
@@ -20,8 +21,16 @@ const router = createRouter({
       }
     },
     {
+      path: '/:userId/settings',
+      name: 'user settings',
+      component: SettingsView,
+      meta: {
+        auth: true
+      }
+    },
+    {
       path: '/sign-in',
-      name: 'signIn',
+      name: 'sign in',
       component: SignInView
     },
     {
@@ -39,7 +48,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.meta.auth && !token) {
-    next({ name: 'signIn' })
+    next({ name: 'sign in' })
   } else if (!to.meta.auth && token) {
     next({ name: 'products' })
   } else {

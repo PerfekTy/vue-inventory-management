@@ -18,13 +18,18 @@ watchEffect(async () => {
 <template>
   <main class="container">
     <header v-if="token" class="mt-5 mb-10">
-      <nav class="flex gap-2">
-        <Button as-child variant="outline">
-          <RouterLink v-if="token" to="/products">
+      <nav class="flex items-center gap-16">
+        <img
+          src="./assets/logo.png"
+          alt="Inventory Managment System Logo"
+          class="aspect-square w-16"
+        />
+        <RouterLink v-slot="{ isActive }" v-if="token" to="/products" as-child>
+          <Button variant="outline" :class="isActive && 'bg-active'">
             <Archive class="mr-2" size="20" />
             Products
-          </RouterLink>
-        </Button>
+          </Button>
+        </RouterLink>
         <UserDropdown :user="user" />
       </nav>
     </header>

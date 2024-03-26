@@ -1,6 +1,7 @@
 <script setup>
 import { defineProps } from 'vue'
-import { LogOut } from 'lucide-vue-next'
+import { RouterLink } from 'vue-router'
+import { LogOut, Pencil } from 'lucide-vue-next'
 import cookies from 'vue-cookies'
 import {
   DropdownMenu,
@@ -33,13 +34,20 @@ const logout = () => {
             alt="Profile image"
             class="rounded-full object-cover aspect-square w-6"
           />
-          {{ user?.name }}
+          <p class="font-semibold">{{ user?.name }}</p>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
+        <DropdownMenuItem as-child>
+          <RouterLink :to="`${user.id}/settings`">
+            <Pencil class="mr-2" size="17" />
+            Settings
+          </RouterLink>
+        </DropdownMenuItem>
         <DropdownMenuItem @click="logout">
-          <LogOut class="mr-2" size="20" /> Logout</DropdownMenuItem
-        >
+          <LogOut class="mr-2" size="17" />
+          Logout
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   </div>
