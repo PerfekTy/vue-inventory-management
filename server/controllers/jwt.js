@@ -1,8 +1,8 @@
 require('dotenv').config()
 const jwt = require('jsonwebtoken')
 
-const expiresIn = 5
-const expiresInRefresh = 60 * 10
+const expiresIn = 60 * 10
+const expiresInRefresh = 60 * 60
 
 const createToken = (user) => {
   return jwt.sign({ user }, process.env.JWT_CREATE_SECRET, { expiresIn })
@@ -34,7 +34,7 @@ const refreshToken = (req, res) => {
   } catch (error) {
     return res
       .status(500)
-      .json({ error: 'Error while decoding refresh token or generating new access token.' })
+      .json({ error: 'Error while decoding refresh token or generating new access token.' + error })
   }
 }
 

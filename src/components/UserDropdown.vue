@@ -1,5 +1,4 @@
 <script setup>
-import { defineProps } from 'vue'
 import { RouterLink } from 'vue-router'
 import { LogOut, Pencil } from 'lucide-vue-next'
 import cookies from 'vue-cookies'

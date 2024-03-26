@@ -36,6 +36,7 @@ const onSubmit = async (values) => {
 
     if (data.token) {
       cookies.set('token', data.token)
+      cookies.set('refreshToken', data.refreshToken)
       window.location.reload()
     }
   } catch ({ response }) {
