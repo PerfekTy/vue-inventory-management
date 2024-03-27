@@ -11,7 +11,7 @@ const user = ref(null)
 
 watchEffect(async () => {
   const response = await getCurrentUser()
-  user.value = response.user
+  user.value = response?.user
 })
 </script>
 

@@ -21,16 +21,25 @@ export function getToken() {
 }
 
 export async function getCurrentUser() {
-  const token = cookies.get('token')
-  const { data } = await api.get(`/api/current-user`)
+  try {
+    const refreshToken = cookies.get('refreshToken')
+    const { data } = await api.get(`/api/current-user`)
 
-  if (jwt.decodeJwt(token).exp === 0) {
-    cookies.remove('token')
+    if (refreshToken) {
+      startTokenRefresh()
+    }
+
+    return data
+  } catch (error) {
+    const refreshToken = cookies.get('refreshToken')
+    if (
+      (error.response.data.error === 'Token is not valid.' ||
+        error.response.data.error === 'Session not found.') &&
+      refreshToken
+    ) {
+      startTokenRefresh()
+    }
   }
-
-  startTokenRefresh()
-
-  return data
 }
 
 async function startTokenRefresh() {
