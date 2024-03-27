@@ -2,9 +2,10 @@
 import { ref, watchEffect } from 'vue'
 import { Archive } from 'lucide-vue-next'
 import { RouterLink, RouterView } from 'vue-router'
-import { getCurrentUser, getToken } from './lib/utils'
 import Button from './components/ui/button/Button.vue'
 import UserDropdown from './components/UserDropdown.vue'
+import { getToken } from './lib/data/token'
+import { getCurrentUser } from './lib/data/user'
 
 const token = getToken()
 const user = ref(null)

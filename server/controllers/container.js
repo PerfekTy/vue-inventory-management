@@ -24,6 +24,17 @@ async function createContainer(req, res) {
   }
 }
 
+async function getContainers(req, res) {
+  try {
+    const query = await db.query(`SELECT * FROM containers`)
+    const containers = query.rows
+    return res.status(200).json(containers)
+  } catch (error) {
+    return res.status(500).json({ error: `Error while fetching containers. ${error}` })
+  }
+}
+
 module.exports = {
-  createContainer
+  createContainer,
+  getContainers
 }

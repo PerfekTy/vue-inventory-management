@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { getToken } from '../lib/utils'
+import { getToken } from '../lib/data/token'
 
 import ProductsView from '../views/ProductsView.vue'
 import SignInView from '../views/SignInView.vue'
