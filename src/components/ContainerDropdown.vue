@@ -1,5 +1,5 @@
 <script setup>
-import { watchEffect, ref, onBeforeMount } from 'vue'
+import { watchEffect, ref } from 'vue'
 import { getContainers } from '@/lib/data/container'
 import { CornerLeftDown } from 'lucide-vue-next'
 import {
@@ -29,26 +29,13 @@ watchEffect(async () => {
   const { containerId } = router.currentRoute.value.query
 
   if (containerId && response?.length > 0) {
-    const firstContainer = response[0]
-    router.push({ query: { containerId: firstContainer?.id } })
-    currentContainer.value = firstContainer?.name
+    currentContainer.value = response.find(
+      (container) => container.id === parseInt(containerId)
+    )?.name
   } else {
     currentContainer.value = response[0]?.name
     router.push({ query: { containerId: response[0]?.id } })
   }
-})
-
-onBeforeMount(() => {
-  router.beforeEach((to, from, next) => {
-    const { containerId } = to.query
-    if (containerId && containers.value) {
-      const selectedContainer = containers.value.find((container) => container.id === containerId)
-      if (selectedContainer) {
-        currentContainer.value = selectedContainer.name
-      }
-    }
-    next()
-  })
 })
 </script>
 

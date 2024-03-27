@@ -22,8 +22,10 @@ async function createProduct(req, res) {
 }
 
 async function getProducts(req, res) {
+  const container_id = await req.originalUrl.split('/')[3]
+
   try {
-    const query = await db.query(`SELECT * FROM products`)
+    const query = await db.query(`SELECT * FROM products WHERE container_id = $1`, [container_id])
     const products = query.rows
     return res.status(200).json(products)
   } catch (error) {

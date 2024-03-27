@@ -49,7 +49,7 @@ const onSubmit = async (values) => {
     <DialogTrigger as-child class="my-3">
       <Button>
         <PackagePlus class="mr-2" size="20" />
-        <p>Create Container</p>
+        <p>Create container</p>
       </Button>
     </DialogTrigger>
     <DialogContent>

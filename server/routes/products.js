@@ -5,7 +5,7 @@ const { createProduct, getProducts } = require('../controllers/product')
 const router = Router()
 
 router.post('/new-product', validateToken(process.env.JWT_CREATE_SECRET), createProduct)
-router.get('/all-products', validateToken(process.env.JWT_CREATE_SECRET), getProducts)
+router.get('/all-products/:containerId', validateToken(process.env.JWT_CREATE_SECRET), getProducts)
 
 module.exports = {
   product: router

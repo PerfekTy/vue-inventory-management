@@ -25,14 +25,22 @@ import CreateContainerModal from '../components/CreateContainerModal.vue'
 import ContainerDropdown from '@/components/ContainerDropdown.vue'
 import CreateProductModal from '@/components/CreateProductModal.vue'
 import Button from '@/components/ui/button/Button.vue'
+import { getContainers } from '@/lib/data/container'
 
 const router = useRouter()
 const products = ref(null)
-const containerId = router.currentRoute.value.query?.containerId
+const containerDescription = ref(null)
 
 watchEffect(async () => {
-  const response = await getProducts()
+  const containerId = router.currentRoute.value.query?.containerId
+  const response = await getProducts(containerId)
+  const containers = await getContainers()
   products.value = response
+  containerDescription.value = containers.find((container) => {
+    if (container.id === parseInt(containerId)) {
+      return container.description
+    }
+  })
 })
 </script>
 
@@ -44,9 +52,8 @@ watchEffect(async () => {
       <CreateContainerModal />
     </div>
   </div>
-  <p>query: {{ containerId }}</p>
   <Table v-if="products">
-    <TableCaption>A list of your recent container products.</TableCaption>
+    <TableCaption>{{ containerDescription.description }}</TableCaption>
     <TableHeader>
       <TableRow>
         <TableHead>Name</TableHead>
