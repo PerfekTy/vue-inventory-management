@@ -1,4 +1,8 @@
 <script setup>
+import { useRouter } from 'vue-router'
+import { format } from 'date-fns'
+import { getProducts } from '../lib/data/product'
+import { ref, watchEffect } from 'vue'
 import { Ellipsis, NotebookPen, X } from 'lucide-vue-next'
 import {
   Table,
@@ -19,19 +23,32 @@ import {
 } from '@/components/ui/dropdown-menu'
 import CreateContainerModal from '../components/CreateContainerModal.vue'
 import ContainerDropdown from '@/components/ContainerDropdown.vue'
+import CreateProductModal from '@/components/CreateProductModal.vue'
 import Button from '@/components/ui/button/Button.vue'
+
+const router = useRouter()
+const products = ref(null)
+const containerId = router.currentRoute.value.query?.containerId
+
+watchEffect(async () => {
+  const response = await getProducts()
+  products.value = response
+})
 </script>
 
 <template>
   <div class="flex items-center justify-between gap-5">
     <ContainerDropdown />
-    <CreateContainerModal />
+    <div class="flex items-center gap-5">
+      <CreateProductModal />
+      <CreateContainerModal />
+    </div>
   </div>
-  <Table>
+  <p>query: {{ containerId }}</p>
+  <Table v-if="products">
     <TableCaption>A list of your recent container products.</TableCaption>
     <TableHeader>
       <TableRow>
-        <TableHead class="w-[200px]">Id</TableHead>
         <TableHead>Name</TableHead>
         <TableHead>Amount</TableHead>
         <TableHead>Expire Date</TableHead>
@@ -41,12 +58,14 @@ import Button from '@/components/ui/button/Button.vue'
       </TableRow>
     </TableHeader>
     <TableBody>
-      <TableRow>
-        <TableCell class="w-[200px]">1</TableCell>
-        <TableCell>Peach</TableCell>
-        <TableCell>12</TableCell>
-        <TableCell>12.03.2024r</TableCell>
-        <TableCell>Kacperek</TableCell>
+      <TableRow v-for="product in products" :key="product.id">
+        <TableCell>{{ product.name }}</TableCell>
+        <TableCell>{{ product.amount }}</TableCell>
+        <TableCell class="flex items-center gap-1 w-[100px] pt-3.5"
+          >{{ format(new Date(product.expire_date), 'dd.MM.yyyy') }},
+          <p>{{ format(new Date(product.expire_date), 'cccc') }}</p>
+        </TableCell>
+        <TableCell>{{ product.added_by }}</TableCell>
         <TableCell>
           <DropdownMenu>
             <DropdownMenuTrigger as-child>
@@ -55,7 +74,7 @@ import Button from '@/components/ui/button/Button.vue'
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuLabel>Peach options</DropdownMenuLabel>
+              <DropdownMenuLabel>{{ product.name }} options</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem><NotebookPen size="17" class="mr-2" />Edit </DropdownMenuItem>
               <DropdownMenuItem><X size="17" class="mr-2" />Delete</DropdownMenuItem>
@@ -66,4 +85,3 @@ import Button from '@/components/ui/button/Button.vue'
     </TableBody>
   </Table>
 </template>
-../components/CreateContainerModal.vue
