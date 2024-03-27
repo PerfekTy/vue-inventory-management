@@ -41,6 +41,7 @@ const onSubmit = async (values) => {
       name: values.name,
       description: values.description
     })
+
     toast.success(data.message)
   } catch ({ response }) {
     error.value = response.data.error
@@ -91,9 +92,12 @@ const onSubmit = async (values) => {
           <p v-if="error" class="text-red-500 my-2">{{ error }}</p>
           <CardFooter class="flex justify-between py-4 px-0">
             <DialogClose as-child>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="destructive">Cancel</Button>
             </DialogClose>
-            <Button>Create</Button>
+            <div class="flex items-center gap-3">
+              <Button variant="outline" type="reset" :ref="clearForm">Clear</Button>
+              <Button>Create</Button>
+            </div>
           </CardFooter>
         </Card>
       </Form>

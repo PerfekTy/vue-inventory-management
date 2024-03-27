@@ -31,6 +31,7 @@ import { api } from '@/lib/axios.interceptors'
 
 const router = useRouter()
 const products = ref(null)
+const containerId = ref(null)
 const containerDescription = ref(null)
 const toast = useToast()
 
@@ -43,13 +44,25 @@ const deleteProduct = async (id) => {
   }
 }
 
+const deleteContainer = async (id) => {
+  try {
+    const decision = confirm('Are you sure you want to delete this container?')
+    if (decision) {
+      const { data } = await api.delete(`/api/delete-container/${id}`)
+      toast.success(data.message)
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 watchEffect(async () => {
-  const containerId = router.currentRoute.value.query?.containerId
-  const response = await getProducts(containerId)
+  containerId.value = router.currentRoute.value.query?.containerId
+  const response = await getProducts(containerId.value)
   const containers = await getContainers()
   products.value = response
   containerDescription.value = containers.find((container) => {
-    if (container.id === parseInt(containerId)) {
+    if (container.id === parseInt(containerId.value)) {
       return container.description
     }
   })
@@ -62,6 +75,9 @@ watchEffect(async () => {
     <div class="flex items-center gap-5">
       <CreateProductModal />
       <CreateContainerModal />
+      <Button variant="destructive" size="icon" @click="deleteContainer(containerId)">
+        <X />
+      </Button>
     </div>
   </div>
   <Table v-if="products">

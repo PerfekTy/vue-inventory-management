@@ -1,5 +1,5 @@
-1. Close new product and create container after submit.
 2. Mutations after add.
 3. Edit option.
 4. Profile settings.
 5. Animations.
+6. After deletion reassign containerId.
