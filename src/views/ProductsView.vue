@@ -1,4 +1,5 @@
 <script setup>
+import { useToast } from 'vue-toast-notification'
 import { useRouter } from 'vue-router'
 import { format } from 'date-fns'
 import { getProducts } from '../lib/data/product'
@@ -26,10 +27,21 @@ import ContainerDropdown from '@/components/ContainerDropdown.vue'
 import CreateProductModal from '@/components/CreateProductModal.vue'
 import Button from '@/components/ui/button/Button.vue'
 import { getContainers } from '@/lib/data/container'
+import { api } from '@/lib/axios.interceptors'
 
 const router = useRouter()
 const products = ref(null)
 const containerDescription = ref(null)
+const toast = useToast()
+
+const deleteProduct = async (id) => {
+  try {
+    const { data } = await api.delete(`/api/delete-product/${id}`)
+    toast.success(data.message)
+  } catch (error) {
+    console.log(error)
+  }
+}
 
 watchEffect(async () => {
   const containerId = router.currentRoute.value.query?.containerId
@@ -59,9 +71,9 @@ watchEffect(async () => {
         <TableHead>Name</TableHead>
         <TableHead>Amount</TableHead>
         <TableHead>Expire Date</TableHead>
-        <TableHead>Added By</TableHead>
+        <TableHead class="text-center">Added By</TableHead>
         <!-- ADMIN ONLY -->
-        <TableHead>Options</TableHead>
+        <TableHead class="text-center">Options</TableHead>
       </TableRow>
     </TableHeader>
     <TableBody>
@@ -72,8 +84,8 @@ watchEffect(async () => {
           >{{ format(new Date(product.expire_date), 'dd.MM.yyyy') }},
           <p>{{ format(new Date(product.expire_date), 'cccc') }}</p>
         </TableCell>
-        <TableCell>{{ product.added_by }}</TableCell>
-        <TableCell>
+        <TableCell class="text-center">{{ product.added_by }}</TableCell>
+        <TableCell class="text-center">
           <DropdownMenu>
             <DropdownMenuTrigger as-child>
               <Button size="sm" variant="outline">
@@ -83,8 +95,14 @@ watchEffect(async () => {
             <DropdownMenuContent>
               <DropdownMenuLabel>{{ product.name }} options</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem><NotebookPen size="17" class="mr-2" />Edit </DropdownMenuItem>
-              <DropdownMenuItem><X size="17" class="mr-2" />Delete</DropdownMenuItem>
+              <DropdownMenuItem>
+                <NotebookPen size="17" class="mr-2" />
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem @click="deleteProduct(product.id)">
+                <X size="17" class="mr-2" />
+                Delete
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </TableCell>

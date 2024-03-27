@@ -23,6 +23,7 @@ const handleContainerSelect = (containerId, containerName) => {
 }
 
 watchEffect(async () => {
+  containers
   const response = await getContainers()
   containers.value = response
 

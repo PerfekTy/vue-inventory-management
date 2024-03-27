@@ -20,13 +20,11 @@ watchEffect(async () => {
   <main class="container">
     <header v-if="token" class="mt-5 mb-10">
       <nav class="flex items-center gap-16">
-        <RouterLink to="/products">
-          <img
-            src="./assets/logo.png"
-            alt="Inventory Managment System Logo"
-            class="aspect-square w-16"
-          />
-        </RouterLink>
+        <img
+          src="./assets/logo.png"
+          alt="Inventory Managment System Logo"
+          class="aspect-square w-16"
+        />
         <RouterLink v-slot="{ isActive }" v-if="token" to="/products" as-child>
           <Button variant="outline" :class="isActive && 'bg-active'">
             <Archive class="mr-2" size="20" />

@@ -17,7 +17,7 @@ async function createContainer(req, res) {
     await db.query('INSERT INTO containers(name, description) VALUES($1, $2)', [name, description])
 
     return res.status(200).json({
-      message: 'Succesfully added container to the database.'
+      message: 'Succesfully added container.'
     })
   } catch (error) {
     return res.status(500).json({ error: `Error while adding container to the database. ${error}` })

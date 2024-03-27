@@ -22,5 +22,6 @@ setInterval(() => {
 
   if (refreshToken) {
     startTokenRefresh()
+    console.log('token refreshed')
   }
 }, 300_000)

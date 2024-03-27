@@ -23,9 +23,10 @@ import {
   FormMessage
 } from '../components/ui/form'
 import { api } from '@/lib/axios.interceptors'
+import { useToast } from 'vue-toast-notification'
 
 const error = ref(null)
-const ifSuccess = ref(false)
+const toast = useToast()
 
 const formSchema = toTypedSchema(
   z.object({
@@ -36,16 +37,20 @@ const formSchema = toTypedSchema(
 
 const onSubmit = async (values) => {
   try {
-    await api.post('/api/new-container', { name: values.name, description: values.description })
-    ifSuccess.value = true
+    const { data } = await api.post('/api/new-container', {
+      name: values.name,
+      description: values.description
+    })
+    toast.success(data.message)
   } catch ({ response }) {
     error.value = response.data.error
+    toast.error(response.data.error)
   }
 }
 </script>
 
 <template>
-  <Dialog v-if="!ifSuccess">
+  <Dialog>
     <DialogTrigger as-child class="my-3">
       <Button>
         <PackagePlus class="mr-2" size="20" />

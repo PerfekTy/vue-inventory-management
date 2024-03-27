@@ -29,14 +29,16 @@ import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { getCurrentUser } from '@/lib/data/user'
 import { useRouter } from 'vue-router'
+import { useToast } from 'vue-toast-notification'
 
 const router = useRouter()
 const error = ref(null)
-const ifSuccess = ref(false)
-const containerId = router.currentRoute.value.query?.containerId
+const containerId = ref(null)
 const userName = ref(null)
+const toast = useToast()
 
 watchEffect(async () => {
+  containerId.value = router.currentRoute.value.query?.containerId
   const response = await getCurrentUser()
   userName.value = response?.user.name
 })
@@ -51,22 +53,23 @@ const formSchema = toTypedSchema(
 
 const onSubmit = async (values) => {
   try {
-    await api.post('/api/new-product', {
+    const { data } = await api.post('/api/new-product', {
       name: values.name,
       amount: values.amount,
       expire_date: values.expire_date,
       added_by: userName,
-      container_id: containerId
+      container_id: containerId.value
     })
-    ifSuccess.value = true
+    toast.success(data.message)
   } catch ({ response }) {
     error.value = response.data.error
+    toast.error(response.data.error)
   }
 }
 </script>
 
 <template>
-  <Dialog v-if="!ifSuccess">
+  <Dialog>
     <DialogTrigger as-child class="my-3">
       <Button variant="outline">
         <CirclePlus class="mr-2" size="20" />
