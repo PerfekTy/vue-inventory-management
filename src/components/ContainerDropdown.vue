@@ -1,6 +1,7 @@
 <script setup>
+import { useRouter } from 'vue-router'
 import { watchEffect, ref } from 'vue'
-import { getContainers } from '@/lib/data/container'
+import { useContainers } from '@/lib/data/container'
 import { CornerLeftDown } from 'lucide-vue-next'
 import {
   DropdownMenu,
@@ -11,10 +12,9 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import Button from './ui/button/Button.vue'
-import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const containers = ref(null)
+const containers = ref(useContainers())
 const currentContainer = ref(null)
 
 const handleContainerSelect = (containerId, containerName) => {
@@ -23,19 +23,19 @@ const handleContainerSelect = (containerId, containerName) => {
 }
 
 watchEffect(async () => {
-  containers
-  const response = await getContainers()
-  containers.value = response
-
   const { containerId } = router.currentRoute.value.query
 
-  if (containerId && response?.length > 0) {
-    currentContainer.value = response.find(
-      (container) => container.id === parseInt(containerId)
-    )?.name
-  } else {
-    currentContainer.value = response[0]?.name
-    router.push({ query: { containerId: response[0]?.id } })
+  if (containers.value) {
+    currentContainer.value =
+      containers.value.data
+        .map((item) => item)
+        .filter((container) => container.id === parseInt(containerId))[0]?.name ||
+      containers.value?.data[0]?.name
+  }
+
+  if (!containerId) {
+    const defaultContainerId = containers.value?.data[0]?.id
+    router.push({ query: { containerId: defaultContainerId } })
   }
 })
 </script>
@@ -53,11 +53,12 @@ watchEffect(async () => {
       <DropdownMenuLabel>Containers</DropdownMenuLabel>
       <DropdownMenuSeparator />
       <DropdownMenuItem
-        v-for="container in containers"
+        v-for="container in containers.data"
         :key="container?.id"
         @click="handleContainerSelect(container.id, container.name)"
-        >{{ container?.name }}</DropdownMenuItem
       >
+        {{ container?.name }}
+      </DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
 </template>

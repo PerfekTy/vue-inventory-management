@@ -1,10 +1,10 @@
 <script setup>
 import * as z from 'zod'
+import { useQuery } from 'vue-query'
 import { ref, watchEffect } from 'vue'
 import { format } from 'date-fns'
 import { toTypedSchema } from '@vee-validate/zod'
 import { CirclePlus } from 'lucide-vue-next'
-import { api } from '@/lib/axios.interceptors'
 import { cn } from '@/lib/utils'
 
 import Dialog from './ui/dialog/Dialog.vue'
@@ -30,6 +30,10 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { getCurrentUser } from '@/lib/data/user'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toast-notification'
+import { useAddProductMutation } from '@/lib/data/product'
+
+const { data } = useQuery('current-user', getCurrentUser)
+const { mutate: addProductMutation } = useAddProductMutation()
 
 const router = useRouter()
 const error = ref(null)
@@ -39,8 +43,7 @@ const toast = useToast()
 
 watchEffect(async () => {
   containerId.value = router.currentRoute.value.query?.containerId
-  const response = await getCurrentUser()
-  userName.value = response?.user.name
+  userName.value = data._object.data?.user.name
 })
 
 const formSchema = toTypedSchema(
@@ -52,19 +55,14 @@ const formSchema = toTypedSchema(
 )
 
 const onSubmit = async (values) => {
-  try {
-    const { data } = await api.post('/api/new-product', {
-      name: values.name,
-      amount: values.amount,
-      expire_date: values.expire_date,
-      added_by: userName,
-      container_id: containerId.value
-    })
-    toast.success(data.message)
-  } catch ({ response }) {
-    error.value = response.data.error
-    toast.error(response.data.error)
-  }
+  addProductMutation({
+    name: values.name,
+    amount: values.amount,
+    expire_date: values.expire_date,
+    added_by: userName,
+    container_id: containerId.value
+  })
+  toast.success('Product added.')
 }
 </script>
 

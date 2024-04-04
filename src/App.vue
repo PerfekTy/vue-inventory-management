@@ -6,13 +6,14 @@ import Button from './components/ui/button/Button.vue'
 import UserDropdown from './components/UserDropdown.vue'
 import { getToken } from './lib/data/token'
 import { getCurrentUser } from './lib/data/user'
+import { useQuery } from 'vue-query'
 
 const token = getToken()
 const user = ref(null)
+const { data } = useQuery('current-user', getCurrentUser)
 
 watchEffect(async () => {
-  const response = await getCurrentUser()
-  user.value = response?.user
+  user.value = data._object.data?.user
 })
 </script>
 
