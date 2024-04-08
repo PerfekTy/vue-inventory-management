@@ -5,7 +5,7 @@ import { format } from 'date-fns'
 import { useDeleteProductMutation, useProducts } from '../lib/data/product'
 import { useDeleteContainerMutation, useContainers } from '../lib/data/container'
 import { ref, watchEffect } from 'vue'
-import { Ellipsis, NotebookPen, X } from 'lucide-vue-next'
+import { Ellipsis, X } from 'lucide-vue-next'
 import {
   Table,
   TableBody,
@@ -27,6 +27,7 @@ import CreateContainerModal from '../components/CreateContainerModal.vue'
 import ContainerDropdown from '@/components/ContainerDropdown.vue'
 import CreateProductModal from '@/components/CreateProductModal.vue'
 import Button from '@/components/ui/button/Button.vue'
+import EditProductModal from '@/components/EditProductModal.vue'
 
 const router = useRouter()
 const toast = useToast()
@@ -102,11 +103,10 @@ watchEffect(() => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuLabel>{{ product.name }} options</DropdownMenuLabel>
+              <DropdownMenuLabel>{{ product.name }}options</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <NotebookPen size="17" class="mr-2" />
-                Edit
+              <DropdownMenuItem as-child>
+                <EditProductModal :product="product" />
               </DropdownMenuItem>
               <DropdownMenuItem @click="deleteProduct(product.id)">
                 <X size="17" class="mr-2" />

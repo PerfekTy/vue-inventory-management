@@ -14,6 +14,10 @@ const addProduct = async (product) => {
   return await api.post('/api/new-product', product)
 }
 
+const editProduct = async (product) => {
+  return await api.patch(`/api/edit-product/${product.id}`, product)
+}
+
 const deleteProduct = async (productId) => {
   return await api.delete(`/api/delete-product/${productId}`)
 }
@@ -27,18 +31,18 @@ export const useAddProductMutation = () => {
   })
 }
 
-export const useDeleteProductMutation = () => {
+export const useEditProductMutation = () => {
   const queryClient = useQueryClient()
-  return useMutation(deleteProduct, {
+  return useMutation(editProduct, {
     onSuccess: () => {
       queryClient.invalidateQueries('products')
     }
   })
 }
 
-export const revalidateProducts = () => {
+export const useDeleteProductMutation = () => {
   const queryClient = useQueryClient()
-  return useMutation(fetchProducts, {
+  return useMutation(deleteProduct, {
     onSuccess: () => {
       queryClient.invalidateQueries('products')
     }

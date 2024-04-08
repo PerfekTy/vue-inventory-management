@@ -33,6 +33,22 @@ async function getProducts(req, res) {
   }
 }
 
+async function editProduct(req, res) {
+  const { id, name, amount, expire_date } = await req.body
+  try {
+    await db.query(`UPDATE products SET name = $1, amount = $2, expire_date = $3 WHERE id = $4`, [
+      name,
+      amount,
+      expire_date,
+      id
+    ])
+
+    return res.status(200).json({ message: 'Product updated.' })
+  } catch (error) {
+    return res.status(500).json({ error: `Error while updating product. ${error}` })
+  }
+}
+
 async function deleteProduct(req, res) {
   const productId = await req.originalUrl.split('/')[3]
   try {
@@ -46,5 +62,6 @@ async function deleteProduct(req, res) {
 module.exports = {
   createProduct,
   getProducts,
+  editProduct,
   deleteProduct
 }

@@ -2,5 +2,4 @@
 2. Profile settings.
 3. Animations.
 4. After deletion reassign containerId.
-5. Reload when containerId changed.
-6. Close modal after mutation.
+5. Reload products when containerId changed.
