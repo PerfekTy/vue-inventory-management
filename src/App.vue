@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watchEffect } from 'vue'
-import { Archive, Home } from 'lucide-vue-next'
+import { Archive, Home, Settings } from 'lucide-vue-next'
 import { RouterLink, RouterView } from 'vue-router'
 import Button from './components/ui/button/Button.vue'
 import UserDropdown from './components/UserDropdown.vue'
@@ -27,24 +27,32 @@ watchEffect(async () => {
           class="aspect-square w-16 mr-5"
         />
         <RouterLink v-slot="{ isActive }" v-if="token" to="/" as-child>
-          <Button variant="outline" :class="isActive && 'bg-active'">
+          <Button variant="outline" :class="isActive && 'bg-primary'">
             <Home class="mr-2" size="20" />
             Home
           </Button>
         </RouterLink>
         <RouterLink v-slot="{ isActive }" v-if="token" to="/products" as-child>
-          <Button variant="outline" :class="isActive && 'bg-active'">
+          <Button variant="outline" :class="isActive && 'bg-primary'">
             <Archive class="mr-2" size="20" />
             Products
           </Button>
         </RouterLink>
-        <UserDropdown :user="user" />
+        <div class="flex items-center gap-5 ml-auto">
+          <RouterLink v-slot="{ isActive }" v-if="token" :to="`/${user.id}/settings`" as-child>
+            <Button variant="outline" :class="isActive && 'bg-primary'">
+              <Settings class="mr-2" size="20" />
+              Profile settings
+            </Button>
+          </RouterLink>
+          <UserDropdown :user="user" />
+        </div>
       </nav>
     </header>
-    <RouterView />
-    <footer class="flex justify-between p-5 bg-primary absolute bottom-0 w-full">
+    <footer v-if="token" class="flex justify-between p-5 bg-primary absolute bottom-0 w-full">
       <p>&copy; 2024 Inventory Managment System</p>
       <p>Sebastian Feleńczak</p>
     </footer>
+    <RouterView />
   </main>
 </template>
