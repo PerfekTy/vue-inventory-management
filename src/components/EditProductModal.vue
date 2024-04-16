@@ -4,7 +4,7 @@ import { useQuery } from 'vue-query'
 import { ref, watchEffect } from 'vue'
 import { format } from 'date-fns'
 import { toTypedSchema } from '@vee-validate/zod'
-import { CirclePlus } from 'lucide-vue-next'
+import { NotebookPen } from 'lucide-vue-next'
 import { cn } from '@/lib/utils'
 
 import Dialog from './ui/dialog/Dialog.vue'
@@ -30,10 +30,17 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { getCurrentUser } from '@/lib/data/user'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toast-notification'
-import { useAddProductMutation } from '@/lib/data/product'
+import { useEditProductMutation } from '@/lib/data/product'
+
+const props = defineProps({
+  product: {
+    type: Object,
+    required: true
+  }
+})
 
 const { data } = useQuery('current-user', getCurrentUser)
-const { mutate: addProductMutation } = useAddProductMutation()
+const { mutate: editProductMutation } = useEditProductMutation()
 
 const router = useRouter()
 const error = ref(null)
@@ -48,47 +55,47 @@ watchEffect(async () => {
 
 const formSchema = toTypedSchema(
   z.object({
-    name: z.string().min(2).max(50),
-    amount: z.number().int(),
-    expire_date: z.date()
+    name: z.string().min(2).max(50).default(props.product.name),
+    amount: z.number().int().default(props.product.amount),
+    expire_date: z.date().default(new Date(props.product.expire_date))
   })
 )
 
 const onSubmit = async (values) => {
-  addProductMutation({
+  editProductMutation({
+    id: props.product.id,
     name: values.name,
     amount: values.amount,
-    expire_date: values.expire_date,
-    added_by: userName,
-    container_id: containerId.value
+    expire_date: values.expire_date
   })
-  toast.success('Product added.')
+  toast.success('Product editted.')
 }
 </script>
 
 <template>
   <Dialog>
-    <DialogTrigger as-child class="my-3">
-      <Button variant="outline">
-        <CirclePlus class="mr-2" size="20" />
-        <p>Add new product</p>
-      </Button>
+    <DialogTrigger class="flex items-center hover:bg-[#f5f5f4] w-full py-1 px-2 rounded-md text-sm">
+      <NotebookPen size="17" class="mr-2" />
+      Edit
     </DialogTrigger>
     <DialogContent>
       <Form :validation-schema="formSchema" @submit="onSubmit" class="space-y-2">
         <Card>
           <CardHeader class="p-0 pb-5">
-            <CardTitle class="text-lg">Add new record to current container</CardTitle>
-            <CardDescription
-              >Feel free to add a new product to your selected container.</CardDescription
-            >
+            <CardTitle class="text-lg"> You are editing {{ product.name }}</CardTitle>
+            <CardDescription>Feel free to edit a current product.</CardDescription>
           </CardHeader>
           <CardContent class="space-y-4">
             <FormField v-slot="{ componentField }" name="name">
               <FormItem>
                 <FormLabel>Product name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Peach" type="text" v-bind="componentField" />
+                  <Input
+                    placeholder="Peach"
+                    type="text"
+                    v-bind="componentField"
+                    :default-value="props.product.name"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -97,7 +104,12 @@ const onSubmit = async (values) => {
               <FormItem>
                 <FormLabel>Amount</FormLabel>
                 <FormControl>
-                  <Input placeholder="5" type="number" v-bind="componentField" />
+                  <Input
+                    placeholder="5"
+                    type="number"
+                    v-bind="componentField"
+                    :default-value="props.product.amount"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -117,13 +129,17 @@ const onSubmit = async (values) => {
                           )
                         "
                       >
-                        <span>{{ value ? format(value, 'PPP') : 'Pick a date' }}</span>
+                        <span>{{
+                          value
+                            ? format(value, 'PPP')
+                            : format(new Date(props.product.expire_date), 'PPP')
+                        }}</span>
                         <CalendarIcon class="ms-auto h-4 w-4 opacity-50" />
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
                   <PopoverContent class="p-0">
-                    <Calendar v-bind="componentField" />
+                    <Calendar v-bind="componentField" :default-value="props.product.expire_date" />
                   </PopoverContent>
                 </Popover>
                 <FormMessage />

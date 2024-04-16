@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import placeholder from '../assets/profile-placeholder.png'
+import placeholder from '../assets/images/profile-placeholder.png'
 
 defineProps({
   user: {

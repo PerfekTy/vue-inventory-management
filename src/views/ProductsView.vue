@@ -2,9 +2,10 @@
 import { useToast } from 'vue-toast-notification'
 import { useRouter } from 'vue-router'
 import { format } from 'date-fns'
-import { getProducts } from '../lib/data/product'
+import { useDeleteProductMutation, useProducts } from '../lib/data/product'
+import { useDeleteContainerMutation, useContainers } from '../lib/data/container'
 import { ref, watchEffect } from 'vue'
-import { Ellipsis, NotebookPen, X } from 'lucide-vue-next'
+import { Ellipsis, X } from 'lucide-vue-next'
 import {
   Table,
   TableBody,
@@ -26,51 +27,44 @@ import CreateContainerModal from '../components/CreateContainerModal.vue'
 import ContainerDropdown from '@/components/ContainerDropdown.vue'
 import CreateProductModal from '@/components/CreateProductModal.vue'
 import Button from '@/components/ui/button/Button.vue'
-import { getContainers } from '@/lib/data/container'
-import { api } from '@/lib/axios.interceptors'
+import EditProductModal from '@/components/EditProductModal.vue'
 
 const router = useRouter()
-const products = ref(null)
-const containerId = ref(null)
-const containerDescription = ref(null)
 const toast = useToast()
 
-const deleteProduct = async (id) => {
-  try {
-    const { data } = await api.delete(`/api/delete-product/${id}`)
-    toast.success(data.message)
-  } catch (error) {
-    console.log(error)
+const containerId = ref(router.currentRoute.value.query?.containerId)
+const containers = ref(useContainers())
+const containerDescription = ref(null)
+
+const products = ref(useProducts(containerId.value))
+
+const { mutate: deleteProductMutation } = useDeleteProductMutation()
+const { mutate: deleteContainerMutation } = useDeleteContainerMutation()
+
+const deleteProduct = (id) => {
+  deleteProductMutation(id)
+  toast.success('Product deleted.')
+}
+
+const deleteContainer = (id) => {
+  const decision = confirm('Are you sure you want to delete this container?')
+  if (decision) {
+    deleteContainerMutation(id)
+    toast.success('Container deleted.')
   }
 }
 
-const deleteContainer = async (id) => {
-  try {
-    const decision = confirm('Are you sure you want to delete this container?')
-    if (decision) {
-      const { data } = await api.delete(`/api/delete-container/${id}`)
-      toast.success(data.message)
-    }
-  } catch (error) {
-    console.log(error)
-  }
-}
-
-watchEffect(async () => {
+watchEffect(() => {
+  router.currentRoute.value.query?.containerId
   containerId.value = router.currentRoute.value.query?.containerId
-  const response = await getProducts(containerId.value)
-  const containers = await getContainers()
-  products.value = response
-  containerDescription.value = containers.find((container) => {
-    if (container.id === parseInt(containerId.value)) {
-      return container.description
-    }
-  })
+  products.value = containerDescription.value = containers.value?.data
+    .map((item) => item)
+    .filter((container) => container.id === parseInt(containerId.value))[0]?.description
 })
 </script>
 
 <template>
-  <div class="flex items-center justify-between gap-5">
+  <div class="flex items-center justify-between gap-5 container">
     <ContainerDropdown />
     <div class="flex items-center gap-5">
       <CreateProductModal />
@@ -80,20 +74,22 @@ watchEffect(async () => {
       </Button>
     </div>
   </div>
-  <Table v-if="products">
-    <TableCaption>{{ containerDescription.description }}</TableCaption>
+  <Table v-if="products" class="container">
+    <TableCaption>{{ containerDescription }}</TableCaption>
     <TableHeader>
       <TableRow>
-        <TableHead>Name</TableHead>
-        <TableHead>Amount</TableHead>
-        <TableHead>Expire Date</TableHead>
-        <TableHead class="text-center">Added By</TableHead>
+        <TableHead class="cursor-pointer hover:text-primary select-none">Name</TableHead>
+        <TableHead class="cursor-pointer hover:text-primary select-none">Amount</TableHead>
+        <TableHead class="cursor-pointer hover:text-primary select-none">Expire Date</TableHead>
+        <TableHead class="cursor-pointer hover:text-primary text-center select-none"
+          >Added By</TableHead
+        >
         <!-- ADMIN ONLY -->
         <TableHead class="text-center">Options</TableHead>
       </TableRow>
     </TableHeader>
     <TableBody>
-      <TableRow v-for="product in products" :key="product.id">
+      <TableRow v-for="product in products.data" :key="product.id">
         <TableCell>{{ product.name }}</TableCell>
         <TableCell>{{ product.amount }}</TableCell>
         <TableCell class="flex items-center gap-1 w-[100px] pt-3.5"
@@ -111,9 +107,8 @@ watchEffect(async () => {
             <DropdownMenuContent>
               <DropdownMenuLabel>{{ product.name }} options</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <NotebookPen size="17" class="mr-2" />
-                Edit
+              <DropdownMenuItem as-child>
+                <EditProductModal :product="product" />
               </DropdownMenuItem>
               <DropdownMenuItem @click="deleteProduct(product.id)">
                 <X size="17" class="mr-2" />

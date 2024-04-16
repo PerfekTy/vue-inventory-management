@@ -1,5 +1,5 @@
-2. Mutations after add.
-3. Edit option.
-4. Profile settings.
-5. Animations.
-6. After deletion reassign containerId.
+1. Edit option.
+2. Profile settings.
+3. Animations.
+4. After deletion reassign containerId.
+5. Reload products when containerId changed.

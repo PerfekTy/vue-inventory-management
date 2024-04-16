@@ -22,11 +22,12 @@ import {
   FormLabel,
   FormMessage
 } from '../components/ui/form'
-import { api } from '@/lib/axios.interceptors'
 import { useToast } from 'vue-toast-notification'
+import { useAddContainerMutation } from '@/lib/data/container'
 
 const error = ref(null)
 const toast = useToast()
+const { mutate: addContainerMutation } = useAddContainerMutation()
 
 const formSchema = toTypedSchema(
   z.object({
@@ -35,18 +36,12 @@ const formSchema = toTypedSchema(
   })
 )
 
-const onSubmit = async (values) => {
-  try {
-    const { data } = await api.post('/api/new-container', {
-      name: values.name,
-      description: values.description
-    })
-
-    toast.success(data.message)
-  } catch ({ response }) {
-    error.value = response.data.error
-    toast.error(response.data.error)
-  }
+const onSubmit = (values) => {
+  addContainerMutation({
+    name: values.name,
+    description: values.description
+  })
+  toast.success('Container added.')
 }
 </script>
 

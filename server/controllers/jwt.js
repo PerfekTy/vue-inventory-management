@@ -1,8 +1,8 @@
 require('dotenv').config()
 const jwt = require('jsonwebtoken')
 
-const expiresIn = 60 * 10
-const expiresInRefresh = 60 * 60
+const expiresIn = 60 * 60
+const expiresInRefresh = 60 * 120
 
 const createToken = (user) => {
   return jwt.sign({ user }, process.env.JWT_CREATE_SECRET, { expiresIn })
