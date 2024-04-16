@@ -64,7 +64,7 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div class="flex items-center justify-between gap-5">
+  <div class="flex items-center justify-between gap-5 container">
     <ContainerDropdown />
     <div class="flex items-center gap-5">
       <CreateProductModal />
@@ -74,14 +74,16 @@ watchEffect(() => {
       </Button>
     </div>
   </div>
-  <Table v-if="products">
+  <Table v-if="products" class="container">
     <TableCaption>{{ containerDescription }}</TableCaption>
     <TableHeader>
       <TableRow>
-        <TableHead>Name</TableHead>
-        <TableHead>Amount</TableHead>
-        <TableHead>Expire Date</TableHead>
-        <TableHead class="text-center">Added By</TableHead>
+        <TableHead class="cursor-pointer hover:text-primary select-none">Name</TableHead>
+        <TableHead class="cursor-pointer hover:text-primary select-none">Amount</TableHead>
+        <TableHead class="cursor-pointer hover:text-primary select-none">Expire Date</TableHead>
+        <TableHead class="cursor-pointer hover:text-primary text-center select-none"
+          >Added By</TableHead
+        >
         <!-- ADMIN ONLY -->
         <TableHead class="text-center">Options</TableHead>
       </TableRow>
@@ -103,7 +105,7 @@ watchEffect(() => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuLabel>{{ product.name }}options</DropdownMenuLabel>
+              <DropdownMenuLabel>{{ product.name }} options</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem as-child>
                 <EditProductModal :product="product" />

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watchEffect } from 'vue'
-import { Archive } from 'lucide-vue-next'
+import { Archive, Home } from 'lucide-vue-next'
 import { RouterLink, RouterView } from 'vue-router'
 import Button from './components/ui/button/Button.vue'
 import UserDropdown from './components/UserDropdown.vue'
@@ -18,14 +18,20 @@ watchEffect(async () => {
 </script>
 
 <template>
-  <main class="container">
-    <header v-if="token" class="mt-5 mb-10">
-      <nav class="flex items-center gap-16">
+  <main class="h-screen relative py-1">
+    <header v-if="token" class="mt-5 mb-10 container">
+      <nav class="flex items-center gap-5">
         <img
-          src="./assets/logo.png"
+          src="./assets/images/logo.png"
           alt="Inventory Managment System Logo"
-          class="aspect-square w-16"
+          class="aspect-square w-16 mr-5"
         />
+        <RouterLink v-slot="{ isActive }" v-if="token" to="/" as-child>
+          <Button variant="outline" :class="isActive && 'bg-active'">
+            <Home class="mr-2" size="20" />
+            Home
+          </Button>
+        </RouterLink>
         <RouterLink v-slot="{ isActive }" v-if="token" to="/products" as-child>
           <Button variant="outline" :class="isActive && 'bg-active'">
             <Archive class="mr-2" size="20" />
@@ -35,7 +41,10 @@ watchEffect(async () => {
         <UserDropdown :user="user" />
       </nav>
     </header>
-
     <RouterView />
+    <footer class="flex justify-between p-5 bg-primary absolute bottom-0 w-full">
+      <p>&copy; 2024 Inventory Managment System</p>
+      <p>Sebastian Feleńczak</p>
+    </footer>
   </main>
 </template>

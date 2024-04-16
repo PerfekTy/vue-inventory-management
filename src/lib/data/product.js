@@ -2,6 +2,7 @@ import { api } from '../axios.interceptors'
 import { useQuery, useMutation, useQueryClient } from 'vue-query'
 
 export async function fetchProducts(container_id) {
+  console.log('fetchProducts', container_id)
   return await api.get(`/api/all-products/${container_id}`)
 }
 

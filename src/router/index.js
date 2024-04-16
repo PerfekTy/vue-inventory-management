@@ -6,12 +6,21 @@ import SignInView from '../views/SignInView.vue'
 import SignUpView from '../views/SignUpView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import SettingsView from '@/views/SettingsView.vue'
+import HomeView from '@/views/HomeView.vue'
 
 const token = getToken()
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
+    {
+      path: '/',
+      name: 'home',
+      component: HomeView,
+      meta: {
+        auth: true
+      }
+    },
     {
       path: '/products',
       name: 'products',
@@ -50,7 +59,7 @@ router.beforeEach((to, from, next) => {
   if (to.meta.auth && !token) {
     next({ name: 'sign in' })
   } else if (!to.meta.auth && token) {
-    next({ name: 'products' })
+    next({ name: 'home' })
   } else {
     next()
   }
