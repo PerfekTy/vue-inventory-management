@@ -13,7 +13,7 @@ const user = ref(null)
 const { data } = useQuery('current-user', getCurrentUser)
 
 watchEffect(async () => {
-  user.value = data._object.data?.user
+  user.value = data._object.data
 })
 </script>
 
@@ -39,7 +39,7 @@ watchEffect(async () => {
           </Button>
         </RouterLink>
         <div class="flex items-center gap-5 ml-auto">
-          <RouterLink v-slot="{ isActive }" v-if="token" :to="`/${user.id}/settings`" as-child>
+          <RouterLink v-slot="{ isActive }" v-if="token" :to="`/${user?.id}/settings`" as-child>
             <Button variant="outline" :class="isActive && 'bg-primary'">
               <Settings class="mr-2" size="20" />
               Profile settings
@@ -49,7 +49,10 @@ watchEffect(async () => {
         </div>
       </nav>
     </header>
-    <footer v-if="token" class="flex justify-between p-5 bg-primary absolute bottom-0 w-full">
+    <footer
+      v-if="token"
+      class="flex justify-between p-5 bg-primary absolute bottom-0 w-full shadow"
+    >
       <p>&copy; 2024 Inventory Managment System</p>
       <p>Sebastian Feleńczak</p>
     </footer>

@@ -1,11 +1,11 @@
 import { startTokenRefresh } from './token'
 import cookies from 'vue-cookies'
 import { api } from '../axios.interceptors'
+import { useMutation, useQueryClient } from 'vue-query'
 
 export async function getCurrentUser() {
   try {
-    const { data } = await api.get(`/api/current-user`)
-
+    const { data } = await api.get(`/api/get-user`)
     return data
   } catch (error) {
     if (
@@ -15,6 +15,20 @@ export async function getCurrentUser() {
       cookies.remove('token')
     }
   }
+}
+
+export async function updateUserProfile(user) {
+  const { userId } = user
+  return await api.patch(`/api/edit-user/${userId}`, user)
+}
+
+export const useUpdateUserProfileMutation = () => {
+  const queryClient = useQueryClient()
+  return useMutation(updateUserProfile, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('current-user')
+    }
+  })
 }
 
 setInterval(() => {
