@@ -41,11 +41,6 @@ const containerId = ref(null)
 const userName = ref(null)
 const toast = useToast()
 
-watchEffect(async () => {
-  containerId.value = router.currentRoute.value.query?.containerId
-  userName.value = data._object.data?.user.name
-})
-
 const formSchema = toTypedSchema(
   z.object({
     name: z.string().min(2).max(50),
@@ -64,6 +59,11 @@ const onSubmit = async (values) => {
   })
   toast.success('Product added.')
 }
+
+watchEffect(async () => {
+  containerId.value = router.currentRoute.value.query?.containerId
+  userName.value = data?._object?.data?.name
+})
 </script>
 
 <template>

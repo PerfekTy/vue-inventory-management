@@ -92,7 +92,7 @@ watchEffect(async () => {
             Username <User class="ml-2" size="20" />
           </FormLabel>
           <FormControl>
-            <Input type="text" v-bind="componentField" :default-value="user?.name" disabled/>
+            <Input type="text" v-bind="componentField" :default-value="user?.name" disabled />
           </FormControl>
           <FormMessage />
         </FormItem>
@@ -125,7 +125,7 @@ watchEffect(async () => {
             <Input
               type="text"
               v-bind="componentField"
-              :default-value="user?.role"
+              :default-value="data?.role"
               class="uppercase"
               disabled
             />

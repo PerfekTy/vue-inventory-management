@@ -1,5 +1,6 @@
 var base64Img = require('base64-img')
 const { db } = require('../db-connection')
+const { product } = require('../routes/products')
 
 async function getCurrentUser(req, res) {
   const currentUser = await req.user
@@ -23,18 +24,16 @@ async function updateUserProfile(req, res) {
   const { name, email, image, userId } = await req.body
 
   try {
-    base64Img.img(image, `public/${userId}`, 'public', (err) => {
-      if (err) {
-        return res.status(500).json({ error: `Error while saving image. ${err}` })
-      }
-    })
+    if (image) {
+      base64Img.img(image, `public/${userId}`, 'public', async (err) => {
+        if (err) {
+          return res.status(500).json({ error: `Error while saving image. ${err}` })
+        }
+        await db.query(`UPDATE users SET image = $1 WHERE id = $2`, [image, userId])
+      })
+    }
 
-    await db.query(`UPDATE users SET name = $1, email = $2, image = $3 WHERE id = $4`, [
-      name,
-      email,
-      image,
-      userId
-    ])
+    await db.query(`UPDATE users SET name = $1, email = $2 WHERE id = $3`, [name, email, userId])
 
     return res.status(200).json({ message: 'User updated.' })
   } catch (error) {

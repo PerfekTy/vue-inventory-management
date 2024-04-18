@@ -93,4 +93,10 @@
   .custom-file-upload input[type='file'] {
     display: none;
   }
+
+  .table-header-arrow {
+    display: inline-block;
+    margin-left: 0.25rem;
+    font-size: 0.75rem;
+  }
 }
